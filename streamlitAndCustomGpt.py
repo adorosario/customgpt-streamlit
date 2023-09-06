@@ -5,7 +5,7 @@ import json
 from sseclient import SSEClient
 import uuid
 
-api_endpoint = 'https://dev.customgpt.ai/api/v1/'
+api_endpoint = 'https://app.customgpt.ai/api/v1/'
 
 # Utilities
 
@@ -59,35 +59,8 @@ def query_chatbot(api_token, project_id,session_id,message,stream='true', lang='
     try:
         stream_response = requests.post(url, json=payload, headers=headers)
         client = SSEClient(stream_response)
-        response = []
-        for event in client.events():
-            resp_data = eval(event.data.replace('null', 'None'))
 
-            if resp_data is not None:
-                if resp_data.get('status') == 'error':
-                    response.append(resp_data.get('message', ''))
-
-                if resp_data.get('status') == 'progress':
-                    response.append(resp_data.get('message', ''))
-
-                if resp_data.get('status') == 'finish' and resp_data.get('citations') is not None:
-                    citation_ids = resp_data.get('citations', [])
-
-                    citation_links = []
-                    ccount = 1
-                    for citation_id in citation_ids:
-                        citation_obj = get_citations(api_token, project_id, citation_id)
-                        url = citation_obj.get('url', '')
-                        
-                        if len(url) > 0:
-                            formatted_url = f"[{ccount}]({url})"
-                            ccount += 1
-                            citation_links.append(formatted_url)
-
-                    if citation_links:
-                        cita = "\n\nSources: " + ", ".join(citation_links)
-                        response.append(cita)
-        return response
+        return client
     except requests.exceptions.RequestException as e:
         return ["Error"]
 
@@ -157,15 +130,44 @@ if prompt := st.chat_input(disabled=not customgpt_api_key):
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            response = query_chatbot(customgpt_api_key, selected_project['id'], st.session_state.session_id, prompt)
+            client = query_chatbot(customgpt_api_key, selected_project['id'], st.session_state.session_id, prompt)
+            # response = []
             placeholder = st.empty()
             full_response = ""
+            for event in client.events():
+                resp_data = eval(event.data.replace('null', 'None'))
+                if resp_data is not None:
+                    if resp_data.get('status') == 'error':
+                        full_response += resp_data.get('message', '')
+                        placeholder.markdown(full_response+ "▌")
 
-            for item in response:
-                full_response += item
-                placeholder.markdown(full_response)
+                    if resp_data.get('status') == 'progress':
+                        full_response += resp_data.get('message', '')
+                        placeholder.markdown(full_response+ "▌")
+
+                    if resp_data.get('status') == 'finish' and resp_data.get('citations') is not None:
+                        citation_ids = resp_data.get('citations', [])
+
+                        citation_links = []
+                        ccount = 1
+                        for citation_id in citation_ids:
+                            citation_obj = get_citations(customgpt_api_key,  selected_project['id'], citation_id)
+                            url = citation_obj.get('url', '')
+                            
+                            if len(url) > 0:
+                                formatted_url = f"[{ccount}]({url})"
+                                ccount += 1
+                                citation_links.append(formatted_url)
+
+                        if citation_links:
+                            cita = "\n\nSources: " + ", ".join(citation_links)
+                            full_response += cita
+                            placeholder.markdown(full_response+ "▌")
+                           
+            placeholder.markdown(full_response)
     if full_response == "":
         full_response = "Oh no! Any unknown error has occured. Please check your CustomGPT Dashboard for details."
         placeholder.markdown(full_response)
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
+
