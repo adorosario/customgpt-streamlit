@@ -4,6 +4,7 @@ import os
 import json
 from sseclient import SSEClient
 import uuid
+import time
 
 api_endpoint = 'https://dev.customgpt.ai/api/v1/'
 
@@ -163,7 +164,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
 
             for item in response:
                 full_response += item
-                placeholder.markdown(full_response)
+                time.sleep(0.05)
+                placeholder.markdown(full_response+ "▌")
+            placeholder.markdown(full_response)
     if full_response == "":
         full_response = "Oh no! Any unknown error has occured. Please check your CustomGPT Dashboard for details."
         placeholder.markdown(full_response)
