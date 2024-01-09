@@ -94,7 +94,7 @@ if "session_id" not in st.session_state:
 
 # CustomGPT Credentials
 with st.sidebar:
-    st.title('CustomGPT Chatbot')
+    st.title('CustomGPT Streamlit Demo')
    
     customgpt_api_key = st.text_input('Enter CustomGPT API Key:', type='password')
     if customgpt_api_key:
