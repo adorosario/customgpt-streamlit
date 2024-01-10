@@ -1,10 +1,13 @@
-This demo Streamlit app is designed to interface with the CustomGPT API, providing a user-friendly chatbot experience. It allows users to interact with various custom GPT agents on your CustomGPT account, manage conversations, and view citations from the chatbot responses.
+This demo Streamlit app is designed to interface with the [CustomGPT API](https://docs.customgpt.ai/reference/i-api-homepage), providing a user-friendly custom GPT chatbot experience. It allows users to interact with various custom GPT agents on your CustomGPT account, manage conversations, and view citations from the chatbot responses.
 
-## Features
+## About CustomGPT
+[CustomGPT.ai](https://customgpt.ai/) is a no-code/low-code SaaS platform to create custom GPT RAG agents with your own content. With just a few lines of code, developers can create sophisticated RAG agents with their own documents and websites, helpdesks, videos, audios, etc. This saves developers the burden of building their own RAG pipeline. And instantly get the benefit of data integrations, anti-hallucination, citations, analytics and [industry-best query relevancy](https://medium.com/towards-artificial-intelligence/build-it-or-buy-it-deployment-options-for-retrieval-augmented-generation-rag-f6d43df8212a). 
+
+## Demo
 - Secure API Key entry
 - Project selection from available CustomGPT projects
-- Real-time chatbot interaction
-- Display of chat history
+- Real-time chatbot interaction WITH streaming
+- Conversations with history
 - Clearing of chat history
 - Citation viewing for chatbot responses
 

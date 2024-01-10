@@ -66,6 +66,7 @@ if "session_id" not in st.session_state:
 with st.sidebar:
     st.title('CustomGPT Streamlit Demo')
    
+    st.markdown("Don't have an API key? Get one [here](https://docs.customgpt.ai/reference/i-api-homepage).")
     customgpt_api_key = st.text_input('Enter CustomGPT API Key:', type='password')
     if customgpt_api_key:
         st.subheader('Select Project')
