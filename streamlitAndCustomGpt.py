@@ -4,6 +4,7 @@ import json
 import uuid
 from customgpt_client import CustomGPT
 
+# Function to retrieve citations using CustomGPT API
 def get_citations(api_token, project_id, citation_id):
     CustomGPT.api_key = api_token
 
@@ -12,23 +13,23 @@ def get_citations(api_token, project_id, citation_id):
         if response_citations.status_code == 200:
             try:
                 citation = response_citations.parsed.data
-                if citation.url != None:
-                    source = {'title': citation.title, 'url': citation.url }
+                if citation.url is not None:
+                    source = {'title': citation.title, 'url': citation.url}
                 else:
-                    source = {'title': 'source', 'url': "" }
-                
+                    source = {'title': 'source', 'url': ""}
             except:
-                if citation.page_url != None:
-                    source = {'title': citation.title, 'url': citation.page_url  }
+                if citation.page_url is not None:
+                    source = {'title': citation.title, 'url': citation.page_url}
                 else:
-                    source = {'title': 'source', 'url': "" }
+                    source = {'title': 'source', 'url': ""}
             
             return source
         else:
             return []
-    except sException as e:
+    except Exception as e:
         print(f"error::{e}")
-   
+
+# Function to query the chatbot using CustomGPT API
 def query_chatbot(api_token, project_id, session_id, message, stream=True, lang='en'):
     CustomGPT.api_key = api_token
     try:
@@ -37,6 +38,7 @@ def query_chatbot(api_token, project_id, session_id, message, stream=True, lang=
     except Exception as e:
         return [f"Error:: {e}"]
 
+# Function to get the list of projects using CustomGPT API
 def get_projectList(api_token):
     CustomGPT.api_key = api_token
     try:
@@ -48,12 +50,15 @@ def get_projectList(api_token):
     except Exception as e:
         print(f"error:get_projectList:: {e}")
 
+# Function to clear chat history
 def clear_chat_history():
     st.session_state.session_id = str(uuid.uuid4())
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
 # App title
 st.set_page_config(page_title="CustomGPT Chatbot")
+
+# Check if session_id is not in session_state, initialize it
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 
@@ -63,9 +68,10 @@ with st.sidebar:
    
     customgpt_api_key = st.text_input('Enter CustomGPT API Key:', type='password')
     if customgpt_api_key:
-
         st.subheader('Select Project')
         listProject = get_projectList(customgpt_api_key)
+        
+        # Check if projects are available
         if listProject is not None:
             projectNames = [projt.project_name for projt in listProject]
             selected_model = st.sidebar.selectbox('Select Model', projectNames, key='selected_model')
@@ -73,8 +79,11 @@ with st.sidebar:
             selected_project = listProject[index]
         else:
             st.error('No projects found. Please check your API key.', icon='❌')
+        
+        # Button to reset chat
         st.sidebar.button('Reset Chat', on_click=clear_chat_history)
 
+# Check if messages is not in session_state.keys(), initialize it
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
@@ -96,34 +105,38 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             client = query_chatbot(customgpt_api_key, selected_project['id'], st.session_state.session_id, prompt)
-            # response = []
             placeholder = st.empty()
             full_response = ""
+            
             for event in client.events():
                 print(event.data)
                 resp_data = eval(event.data.replace('null', 'None'))
+                
+                # Check different status types
                 if resp_data is not None:
                     if resp_data.get('status') == 'error':
                         full_response += resp_data.get('message', '')
-                        placeholder.markdown(full_response+ "▌")
+                        placeholder.markdown(full_response + "▌")
 
                     if resp_data.get('status') == 'progress':
                         full_response += resp_data.get('message', '')
-                        placeholder.markdown(full_response+ "▌")
+                        placeholder.markdown(full_response + "▌")
 
                     if resp_data.get('status') == 'finish' and resp_data.get('citations') is not None:
                         citation_ids = resp_data.get('citations', [])
 
                         citation_links = []
                         count = 1
+                        
+                        # Process citation links
                         for citation_id in citation_ids:
-                            citation_obj = get_citations(customgpt_api_key,  selected_project['id'], citation_id)
+                            citation_obj = get_citations(customgpt_api_key, selected_project['id'], citation_id)
                             url = citation_obj.get('url', '')
                             title = citation_obj.get('title', '')
                             
                             if len(url) > 0:
                                 formatted_url = f"{count}. [{title or url}]({url})"
-                                count +=1
+                                count += 1
                                 citation_links.append(formatted_url)
 
                         if citation_links:
@@ -131,12 +144,13 @@ if st.session_state.messages[-1]["role"] != "assistant":
                             for link in citation_links:
                                 cita += f"{link}\n"
                             full_response += cita
-                            placeholder.markdown(full_response+ "▌")
+                            placeholder.markdown(full_response + "▌")
                            
             placeholder.markdown(full_response)
+            
     if full_response == "":
-        full_response = "Oh no! Any unknown error has occured. Please check your CustomGPT Dashboard for details."
+        full_response = "Oh no! Any unknown error has occurred. Please check your CustomGPT Dashboard for details."
         placeholder.markdown(full_response)
+    
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
-
