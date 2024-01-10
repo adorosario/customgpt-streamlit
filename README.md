@@ -10,9 +10,7 @@ This demo Streamlit app is designed to interface with the CustomGPT API, providi
 
 ## Requirements
 - Streamlit
-- Requests
-- SSEClient
-- UUID
+- customgpt_client
 
 ## Installation
 
@@ -20,7 +18,7 @@ This demo Streamlit app is designed to interface with the CustomGPT API, providi
 
 2. **Install Dependencies**: Run the following command to install the required Python packages.
    ```bash
-   pip install streamlit requests sseclient uuid
+   pip install -r requirements.txt
    ```
 
 ## Usage
