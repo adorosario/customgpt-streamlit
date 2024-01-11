@@ -3,13 +3,17 @@ This demo Streamlit app is designed to interface with the [CustomGPT API](https:
 ## About CustomGPT
 [CustomGPT.ai](https://customgpt.ai/) is a no-code/low-code SaaS platform to create custom GPT RAG agents with your own content. With just a few lines of code, developers can create sophisticated RAG agents with their own documents and websites, helpdesks, videos, audios, etc. This saves developers the burden of building their own RAG pipeline. And instantly get the benefit of data integrations, anti-hallucination, citations, analytics and [industry-best query relevancy](https://medium.com/towards-artificial-intelligence/build-it-or-buy-it-deployment-options-for-retrieval-augmented-generation-rag-f6d43df8212a). 
 
-## Demo
-- Secure API Key entry
+## Live Demo
+If you have your own CustomGPT API key and projects, you can test the experience on the live app: 
+https://customgpt-demo-app.streamlit.app/
+
+## Features In This Demo
 - Project selection from available CustomGPT projects
 - Real-time chatbot interaction WITH streaming
 - Conversations with history
 - Clearing of chat history
 - Citation viewing for chatbot responses
+- RAG Agent with anti-hallucination.
 
 ## Requirements
 - Streamlit
@@ -51,16 +55,15 @@ This demo Streamlit app is designed to interface with the [CustomGPT API](https:
 - **API Key Input**: Secure text input for entering the CustomGPT API Key.
 - **Project Selection**: Dropdown to select a project for the chatbot conversation.
 - **Chat Interface**: Real-time chat interface for interacting with the CustomGPT chatbot.
-- **Chat History**: Displays the conversation history.
 - **Reset Chat**: Button to reset the chat history.
 
 ## Troubleshooting
 - **API Key Issues**: Ensure that your CustomGPT API Key is entered correctly.
 - **Connection Problems**: Check your internet connection if the app fails to connect to the CustomGPT API.
-- **Unknown Errors**: For unhandled errors, check your CustomGPT Dashboard for more details.
+- **Unknown Errors**: For unhandled errors or query logs, check your CustomGPT Dashboard for more details.
 
 ## Support
-For support, please contact the repository owner or submit an issue on the GitHub repository page.
+For support, please contact the repository owner or submit an issue on the GitHub repository page. You can also [contact CustomGPT](https://customgpt.ai/contact-us). 
 
 ## Contributing
 Contributions to this project are welcome. Please fork the repository and submit a pull request with your proposed changes.
